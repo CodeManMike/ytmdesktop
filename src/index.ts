@@ -323,7 +323,13 @@ if (store.get("integrations").discordPresenceEnabled) {
   discordPresence.enable();
 }
 
-// LastFM Integration can be found inside of the app ready event.
+// Integrations which require to be started AFTER the app is ready
+app.whenReady().then(function() {
+  if (store.get("integrations").lastFMEnabled) {
+    lastFMScrobbler.provide(store);
+    lastFMScrobbler.enable();
+  }
+});
 
 function integrationsSetupAppReady() {
   let companionServerAuthWindowEnabled = false;
@@ -841,13 +847,6 @@ const createMainWindow = (): void => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-
-  // Last.FM Integration requires the app to be ready for the safeStorage to function
-  if (store.get("integrations").lastFMEnabled) {
-    lastFMScrobbler.provide(store);
-    lastFMScrobbler.enable();
-  }
-
   // Handle main window ipc
   ipcMain.on("mainWindow:minimize", () => {
     if (mainWindow !== null) {
