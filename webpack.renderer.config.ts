@@ -5,9 +5,10 @@ import { VueLoaderPlugin } from "vue-loader";
 import { rules } from "./webpack.rules";
 import { plugins } from "./webpack.plugins";
 
-import { GitRevisionPlugin } from "git-revision-webpack-plugin";
+import ChildProcess from 'child_process';
 
-const gitRevisionPlugin = new GitRevisionPlugin();
+const gitBranch = ChildProcess.execSync("git rev-parse --abbrev-ref HEAD").toString();
+const gitCommitHash = ChildProcess.execSync("git rev-parse HEAD").toString();
 
 rules.push({
   test: /\.css$/,
@@ -25,18 +26,19 @@ rules.push({
   test: /\.ttf$/,
   type: "asset/resource"
 });
+rules.push({
+  test: /\.script\.(ts|js)$/,
+  type: "asset/source",
+});
 
 export const rendererConfig: Configuration = {
   module: {
     rules
   },
   plugins: [
-    gitRevisionPlugin,
     new DefinePlugin({
-      YTMD_GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
-      YTMD_GIT_COMMIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
-      YTMD_GIT_BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
-      YTMD_GIT_LAST_COMMIT_DATE_TIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime())
+      YTMD_GIT_COMMIT_HASH: JSON.stringify(gitCommitHash),
+      YTMD_GIT_BRANCH: JSON.stringify(gitBranch)
     }),
     new VueLoaderPlugin(),
     ...plugins

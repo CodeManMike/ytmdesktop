@@ -1,4 +1,7 @@
 export type StoreSchema = {
+  metadata: {
+    version: 1
+  }
   general: {
     hideToTrayOnClose: boolean;
     showNotificationOnSongChange: boolean;
@@ -22,7 +25,9 @@ export type StoreSchema = {
     companionServerEnabled: boolean;
     companionServerAuthWindowEnabled: string | null; // boolean | Encrypted for security
     companionServerAuthTokens: string | null; // array[object] | Encrypted for security
+    companionServerCORSWildcardEnabled: boolean;
     discordPresenceEnabled: boolean;
+    lastFMEnabled: boolean;
   };
   shortcuts: {
     playPause: string;
@@ -41,4 +46,13 @@ export type StoreSchema = {
     windowBounds: Electron.Rectangle | null;
     windowMaximized: boolean;
   };
+  lastfm: {
+    api_key: string;
+    secret: string;
+    token: string | null;
+    sessionKey: string | null;
+  };
+  developer: {
+    enableDevTools: boolean
+  }
 };
